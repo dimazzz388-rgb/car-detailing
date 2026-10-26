@@ -1059,33 +1059,65 @@
               </div>
             )}
 
-            {/* АССИСТЕНТ */}
+            {/* 5. УЛУЧШЕННЫЙ AI-АССИСТЕНТ */}
             {activeTab === "assistant" && (
               <div className="space-y-4 flex flex-col h-[70vh]">
                 <div>
                   <h2 className="text-xl font-bold text-white">AI-консультант студии</h2>
-                  <p className="text-xs text-white/50">Живые ответы по услугам и графику</p>
+                  <p className="text-xs text-white/50">Мгновенные ответы по услугам, ценам и графику {tenantConfig.name}</p>
                 </div>
 
-                <div className="flex gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
-                  <button
-                    onClick={() => sendAssistant("Когда ближайшее окно?")}
-                    className="whitespace-nowrap px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#008CFF]/50 text-white/80 shrink-0"
-                  >
-                    Когда ближайшее окно?
-                  </button>
-                  <button
-                    onClick={() => sendAssistant("Сколько стоит полировка?")}
-                    className="whitespace-nowrap px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#008CFF]/50 text-white/80 shrink-0"
-                  >
-                    Сколько стоит полировка?
-                  </button>
-                  <button
-                    onClick={() => sendAssistant("Как найти студию?")}
-                    className="whitespace-nowrap px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#008CFF]/50 text-white/80 shrink-0"
-                  >
-                    Как найти студию?
-                  </button>
+                {/* 8 популярных вопросов в ряд без свайпа */}
+                <div className="flex flex-wrap gap-1.5 text-xs">
+                  {[
+                    "Когда ближайшее окно?",
+                    "Сколько стоит полировка?",
+                    "Как к вам проехать?",
+                    "Нужно ли мыть машину?",
+                    "Какая гарантия на работы?",
+                    "Сколько длится мойка?",
+                    "Есть ли комната отдыха?",
+                    "Как отменить запись?"
+                  ].map((label, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        const u = { role: "user", text: label };
+                        let ans = "";
+                        const q = label.toLowerCase();
+
+                        const minPrice = Math.min(...tenantConfig.services.map(s => s.price));
+                        const polishService = tenantConfig.services.find(s => s.title.toLowerCase().includes('полировк'));
+
+                        if (q.includes("окн") || q.includes("время")) {
+                          ans = `В студии ${tenantConfig.name} (${tenantConfig.city}) запись ведется ежедневно с 09:00 до 21:00. Вы можете выбрать свободное время во вкладке «Запись».`;
+                        } else if (q.includes("полировк") || q.includes("стоит")) {
+                          ans = polishService 
+                            ? `Восстановительная полировка у нас стоит ${polishService.price.toLocaleString("ru-RU")} ₽ (занимает ~${polishService.duration} ч).`
+                            : `Стоимость услуг в нашей студии начинается от ${minPrice.toLocaleString("ru-RU")} ₽. Подробности в разделе «Услуги».`;
+                        } else if (q.includes("найти") || q.includes("адрес") || q.includes("проехать")) {
+                          ans = `Мы находимся по адресу: ${tenantConfig.address}. Телефон для связи: ${tenantConfig.phone}.`;
+                        } else if (q.includes("мыть") || q.includes("мойк")) {
+                          ans = "Нет, перед визитом мыть машину не нужно! Каждая услуга в нашей студии уже включает профессиональную детейлинг-мойку.";
+                        } else if (q.includes("гарант")) {
+                          ans = `${tenantConfig.badge}. Мы уверены в качестве материалов и предоставляем официальную гарантию на все виды защитных работ.`;
+                        } else if (q.includes("длит") || q.includes("сколько длится")) {
+                          ans = `Длительность зависит от выбранной услуги: от 2 часов для комплексной мойки до нескольких дней для полной оклейки защитной пленкой.`;
+                        } else if (q.includes("комнат") || q.includes("отдых") || q.includes("кофе")) {
+                          ans = "Да, для наших клиентов предусмотрена уютная зона отдыха с ароматным кофе, Wi-Fi и возможностью наблюдать за процессом работы.";
+                        } else if (q.includes("отмен")) {
+                          ans = "Вы можете бесплатно отменить или перенести запись онлайн в разделе «Моя запись» не позднее чем за 2 часа до начала визита.";
+                        } else {
+                          ans = `В студии ${tenantConfig.name} доступно ${tenantConfig.services.length} основных услуг. Откройте вкладку «Запись», чтобы забронировать визит.`;
+                        }
+
+                        setChatMessages((p) => [...p, u, { role: "assistant", text: ans }]);
+                      }}
+                      className="px-2.5 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#008CFF]/50 text-white/80 transition-colors"
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="flex-1 overflow-y-auto space-y-3 p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
@@ -1105,13 +1137,22 @@
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Задайте вопрос..."
+                    placeholder="Задайте вопрос о студии..."
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && chatInput.trim()) {
-                        sendAssistant(chatInput.trim());
+                        const txt = chatInput.trim();
                         setChatInput("");
+                        const u = { role: "user", text: txt };
+                        let ans = `Спасибо за вопрос! Пожалуйста, выберите удобное время в разделе «Запись» или позвоните нам по номеру ${tenantConfig.phone}.`;
+                        const q = txt.toLowerCase();
+                        if (q.includes("цена") || q.includes("стоимост") || q.includes("прайс")) {
+                          ans = `В студии ${tenantConfig.name} доступно ${tenantConfig.services.length} услуг. Цены начинаются от ${Math.min(...tenantConfig.services.map(s => s.price)).toLocaleString("ru-RU")} ₽.`;
+                        } else if (q.includes("адрес") || q.includes("где")) {
+                          ans = `Наш адрес: ${tenantConfig.address}.`;
+                        }
+                        setChatMessages((p) => [...p, u, { role: "assistant", text: ans }]);
                       }
                     }}
                     className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:border-[#008CFF] outline-none"
@@ -1119,8 +1160,17 @@
                   <button
                     onClick={() => {
                       if (chatInput.trim()) {
-                        sendAssistant(chatInput.trim());
+                        const txt = chatInput.trim();
                         setChatInput("");
+                        const u = { role: "user", text: txt };
+                        let ans = `Спасибо за вопрос! Пожалуйста, выберите удобное время в разделе «Запись» или позвоните нам по номеру ${tenantConfig.phone}.`;
+                        const q = txt.toLowerCase();
+                        if (q.includes("цена") || q.includes("стоимост") || q.includes("прайс")) {
+                          ans = `В студии ${tenantConfig.name} доступно ${tenantConfig.services.length} услуг. Цены начинаются от ${Math.min(...tenantConfig.services.map(s => s.price)).toLocaleString("ru-RU")} ₽.`;
+                        } else if (q.includes("адрес") || q.includes("где")) {
+                          ans = `Наш адрес: ${tenantConfig.address}.`;
+                        }
+                        setChatMessages((p) => [...p, u, { role: "assistant", text: ans }]);
                       }
                     }}
                     className="px-4 py-2.5 rounded-xl bg-[#008CFF] text-white text-xs sm:text-sm font-semibold"
