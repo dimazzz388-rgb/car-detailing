@@ -443,15 +443,16 @@
                       </div>
                     </div>
 
-                    <div className="p-2.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                    <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
   <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
     </svg>
   </div>
   <div>
-    <div className="text-xs sm:text-base font-bold text-white leading-tight break-words">
-      от {Math.min(...tenantConfig.services.map(s => s.price)).toLocaleString("ru-RU")} ₽
+    <div className="text-[10px] sm:text-xs text-white/40 leading-none">от</div>
+    <div className="text-base sm:text-lg font-bold text-white leading-tight mt-0.5">
+      {Math.min(...tenantConfig.services.map(s => s.price)).toLocaleString("ru-RU")} ₽
     </div>
     <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">за услугу</div>
   </div>
