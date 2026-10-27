@@ -122,6 +122,7 @@
     openHours: "Пн-Сб: 10:00 – 20:00",
     boxes: 2,
     heroImage: "https://i.postimg.cc/zv9L9x9P/Screenshot-24.png",
+    enableServiceSearch: true, // <--- ВОТ ЭТА СТРОЧКА включает поиск в услугах
     services: [
   // --- ПОЛИРОВКА ---
   {
@@ -353,6 +354,7 @@
       };
 
       const [activeTab, setActiveTab] = useState("home");
+      const [serviceSearch, setServiceSearch] = useState("");
       
       // Настройки студии (подставляются автоматически из конфига ссылки и редактируются в админке)
       const [tenantConfig, setTenantConfig] = useState(TENANT_CONFIG);
@@ -759,42 +761,83 @@
             )}
 
             {/* ВСЕ УСЛУГИ */}
-            {activeTab === "services" && (
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-xl font-bold text-white">Услуги и цены</h2>
-                  <p className="text-xs text-white/50">Выберите услугу для перехода к бронированию</p>
-                </div>
+            {/* ВСЕ УСЛУГИ */}
+{activeTab === "services" && (
+  <div className="space-y-4">
+    <div>
+      <h2 className="text-xl font-bold text-white">Услуги и цены</h2>
+      <p className="text-xs text-white/50">Выберите услугу для перехода к бронированию</p>
+    </div>
 
-                <div className="space-y-3">
-                  {tenantConfig.services.map((s) => (
-                    <div
-                      key={s.id}
-                      onClick={() => {
-                        setSelectedService(s);
-                        setActiveTab("booking");
-                        setBookingStep(2);
-                      }}
-                      style={{
-                        background: "rgba(255, 255, 255, 0.03)",
-                        backdropFilter: "blur(12px)",
-                      }}
-                      className="p-5 rounded-2xl border border-white/[0.06] hover:border-[#008CFF]/50 active:border-[#008CFF]/50 transition-all cursor-pointer flex flex-col gap-2"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm sm:text-base font-semibold text-white">{s.title}</h3>
-                        <span className="text-sm sm:text-base font-bold text-[#008CFF]">{s.price.toLocaleString("ru-RU")} ₽</span>
-                      </div>
-                      <p className="text-xs text-white/50 leading-relaxed">{s.desc}</p>
-                      <div className="flex items-center justify-between pt-1 border-t border-white/[0.04] text-xs">
-                        <span className="text-white/40">Время: {s.duration >= 8 ? `${Math.round(s.duration / 8)} д.` : `${s.duration} ч.`}</span>
-                        <span className="font-bold text-[#008CFF]">Выбрать ↗</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+    {/* Поле поиска: отображается ТОЛЬКО если enableServiceSearch: true */}
+    {tenantConfig.enableServiceSearch && (
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Поиск по услугам (например: полировка, пленка)..."
+          value={serviceSearch}
+          onChange={(e) => setServiceSearch(e.target.value)}
+          className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus:border-[#008CFF] outline-none"
+        />
+        {serviceSearch && (
+          <button
+            onClick={() => setServiceSearch("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white text-xs"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+    )}
+
+    {/* Список услуг с учетом поиска */}
+    <div className="space-y-3">
+      {(() => {
+        const query = serviceSearch.toLowerCase().trim();
+        const filtered = tenantConfig.enableServiceSearch && query
+          ? tenantConfig.services.filter(s => 
+              s.title.toLowerCase().includes(query) || 
+              (s.desc && s.desc.toLowerCase().includes(query))
+            )
+          : tenantConfig.services;
+
+        if (filtered.length === 0) {
+          return (
+            <div className="p-8 text-center rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+              <p className="text-xs text-white/40">Услуг по запросу «{serviceSearch}» не найдено</p>
+            </div>
+          );
+        }
+
+        return filtered.map((s) => (
+          <div
+            key={s.id}
+            onClick={() => {
+              setSelectedService(s);
+              setActiveTab("booking");
+              setBookingStep(2);
+            }}
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              backdropFilter: "blur(12px)",
+            }}
+            className="p-5 rounded-2xl border border-white/[0.06] hover:border-[#008CFF]/50 active:border-[#008CFF]/50 transition-all cursor-pointer flex flex-col gap-2"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm sm:text-base font-semibold text-white">{s.title}</h3>
+              <span className="text-sm sm:text-base font-bold text-[#008CFF]">{s.price.toLocaleString("ru-RU")} ₽</span>
+            </div>
+            <p className="text-xs text-white/50 leading-relaxed">{s.desc}</p>
+            <div className="flex items-center justify-between pt-1 border-t border-white/[0.04] text-xs">
+              <span className="text-white/40">Время: {s.duration >= 8 ? `${Math.round(s.duration / 8)} д.` : `${s.duration} ч.`}</span>
+              <span className="font-bold text-[#008CFF]">Выбрать ↗</span>
+            </div>
+          </div>
+        ));
+      })()}
+    </div>
+  </div>
+)}
 
             {/* МАСТЕР ЗАПИСИ (4 ШАГА) */}
             {activeTab === "booking" && (
