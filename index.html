@@ -878,33 +878,73 @@
                   </div>
                 )}
 
-                {/* ШАГ 1 */}
+                {/* ШАГ 1 С ПОИСКОВИКОМ */}
                 {bookingStep === 1 && (
                   <div className="space-y-3">
-                    {tenantConfig.services.map((s) => (
-                      <div
-                        key={s.id}
-                        onClick={() => {
-                          setSelectedService(s);
-                          setBookingStep(2);
-                        }}
-                        style={{
-                          background: selectedService?.id === s.id ? "rgba(0, 140, 255, 0.1)" : "rgba(255, 255, 255, 0.03)",
-                        }}
-                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                          selectedService?.id === s.id ? "border-[#008CFF]" : "border-white/[0.06] hover:border-[#008CFF]/40"
-                        }`}
-                      >
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-semibold text-white">{s.title}</h4>
-                          <p className="text-xs text-white/40">{s.duration >= 8 ? `${Math.round(s.duration / 8)} д.` : `${s.duration} ч.`}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-bold text-white">{s.price.toLocaleString("ru-RU")} ₽</div>
-                          <span className="text-xs font-bold text-[#008CFF]">Выбрать ↗</span>
-                        </div>
+                    {/* Поле поиска: отображается только если enableServiceSearch: true */}
+                    {tenantConfig.enableServiceSearch && (
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Поиск по услугам (например: мойка, полировка)..."
+                          value={serviceSearch}
+                          onChange={(e) => setServiceSearch(e.target.value)}
+                          className="w-full bg-white/[0.04] border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-white placeholder:text-white/40 focus:border-[#008CFF] outline-none"
+                        />
+                        {serviceSearch && (
+                          <button
+                            onClick={() => setServiceSearch("")}
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/40 hover:text-white text-xs"
+                          >
+                            ✕
+                          </button>
+                        )}
                       </div>
-                    ))}
+                    )}
+
+                    {/* Фильтрованный список услуг */}
+                    {(() => {
+                      const query = serviceSearch.toLowerCase().trim();
+                      const filtered = tenantConfig.enableServiceSearch && query
+                        ? tenantConfig.services.filter(s => 
+                            s.title.toLowerCase().includes(query) || 
+                            (s.desc && s.desc.toLowerCase().includes(query))
+                          )
+                        : tenantConfig.services;
+
+                      if (filtered.length === 0) {
+                        return (
+                          <div className="p-8 text-center rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                            <p className="text-xs text-white/40">Услуг по запросу «{serviceSearch}» не найдено</p>
+                          </div>
+                        );
+                      }
+
+                      return filtered.map((s) => (
+                        <div
+                          key={s.id}
+                          onClick={() => {
+                            setSelectedService(s);
+                            setBookingStep(2);
+                          }}
+                          style={{
+                            background: selectedService?.id === s.id ? "rgba(0, 140, 255, 0.1)" : "rgba(255, 255, 255, 0.03)",
+                          }}
+                          className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                            selectedService?.id === s.id ? "border-[#008CFF]" : "border-white/[0.06] hover:border-[#008CFF]/40"
+                          }`}
+                        >
+                          <div className="space-y-1">
+                            <h4 className="text-sm font-semibold text-white">{s.title}</h4>
+                            <p className="text-xs text-white/40">{s.duration >= 8 ? `${Math.round(s.duration / 8)} д.` : `${s.duration} ч.`}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-bold text-white">{s.price.toLocaleString("ru-RU")} ₽</div>
+                            <span className="text-xs font-bold text-[#008CFF]">Выбрать ↗</span>
+                          </div>
+                        </div>
+                      ));
+                    })()}
                   </div>
                 )}
 
