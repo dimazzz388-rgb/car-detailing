@@ -1441,25 +1441,29 @@
             )}
           </main>
 
-          {/* КРУГЛАЯ ПАРЯЩАЯ КНОПКА АССИСТЕНТА (СПРАВА НАД ХОТБАРОМ) */}
-          <div className="fixed bottom-24 right-4 sm:right-6 z-40">
-            <button
-              onClick={() => setActiveTab("assistant")}
-              style={{
-                background: activeTab === "assistant" ? "#008CFF" : "rgba(13, 15, 18, 0.75)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: activeTab === "assistant" ? "1px solid #008CFF" : "1px solid rgba(255, 255, 255, 0.12)",
-                boxShadow: activeTab === "assistant" ? "0 8px 25px rgba(0, 140, 255, 0.5)" : "0 8px 30px rgba(0, 0, 0, 0.5)"
-              }}
-              className="w-13 h-13 p-3.5 rounded-full flex items-center justify-center text-white hover:border-[#008CFF]/60 active:scale-95 transition-all shadow-xl group"
-              title="AI-Консультант"
-            >
-              <svg className="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-            </button>
-          </div>
+          {/* КРУГЛАЯ ПАРЯЩАЯ КНОПКА АССИСТЕНТА (ПРИВЯЗАНА К СЕТКЕ КОНТЕНТА) */}
+          {activeTab !== "assistant" && (
+            <div className="fixed bottom-24 left-0 right-0 z-40 px-4 sm:px-6 pointer-events-none">
+              <div className="max-w-2xl mx-auto flex justify-end">
+                <button
+                  onClick={() => setActiveTab("assistant")}
+                  style={{
+                    background: "rgba(13, 15, 18, 0.75)",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    boxShadow: "0 8px 30px rgba(0, 0, 0, 0.5)"
+                  }}
+                  className="w-13 h-13 p-3.5 rounded-full flex items-center justify-center text-white hover:border-[#008CFF]/60 active:scale-95 transition-all shadow-xl group pointer-events-auto"
+                  title="AI-Консультант"
+                >
+                  <svg className="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* НИЖНИЙ ТАБ-БАР (РОВНО 3 КНОПКИ: ГЛАВНАЯ, ЗАПИСЬ, МОЯ ЗАПИСЬ) */}
           <div className="fixed bottom-4 sm:bottom-6 left-0 right-0 z-40 px-3 sm:px-6 pointer-events-none">
