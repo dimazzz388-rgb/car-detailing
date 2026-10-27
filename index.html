@@ -574,6 +574,20 @@
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Открыто
                 </div>
+
+                {/* Кнопка чата в шапке — отображается ИСКЛЮЧИТЕЛЬНО на экране записи */}
+                {activeTab === "booking" && (
+                  <button
+                    onClick={() => setActiveTab("assistant")}
+                    className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.1] hover:border-[#008CFF]/50 flex items-center justify-center text-white/80 transition-all active:scale-95"
+                    title="Задать вопрос ассистенту"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </button>
+                )}
+
                 <a
                   href={`tel:${tenantConfig.phone}`}
                   className="w-9 h-9 rounded-xl bg-white/[0.05] border border-white/[0.1] hover:border-[#008CFF]/50 flex items-center justify-center text-white/80 transition-all active:scale-95"
@@ -1441,8 +1455,8 @@
             )}
           </main>
 
-          {/* КРУГЛАЯ ПАРЯЩАЯ КНОПКА АССИСТЕНТА (ПРИВЯЗАНА К СЕТКЕ КОНТЕНТА) */}
-          {activeTab !== "assistant" && (
+          {/* КРУГЛАЯ ПАРЯЩАЯ КНОПКА (ТОЛЬКО НА ГЛАВНОЙ И НА СТРАНИЦЕ «МОЯ ЗАПИСЬ») */}
+          {(activeTab === "home" || activeTab === "my-booking") && (
             <div className="fixed bottom-24 left-0 right-0 z-40 px-4 sm:px-6 pointer-events-none">
               <div className="max-w-2xl mx-auto flex justify-end">
                 <button
