@@ -1787,7 +1787,9 @@
                             <h4 className="text-sm sm:text-base font-semibold text-white mt-1">{b.serviceTitle}</h4>
                             <p className="text-xs text-white/50">{b.carModel}</p>
                           </div>
-                          <span className="text-sm sm:text-base font-bold text-white">{b.price.toLocaleString("ru-RU")} ₽</span>
+                          {Boolean(b.price) && (
+                            <span className="text-sm font-bold text-white">{b.price.toLocaleString("ru-RU")} ₽</span>
+                          )}
                         </div>
 
                         <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] text-xs text-white/70 space-y-1">
@@ -2173,7 +2175,10 @@
                           <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                             <div className="text-white/40">Ожидаемая касса</div>
                             <div className="text-lg font-bold text-[#008CFF] mt-1">
-                              {bookings.filter((b) => b.status !== "cancelled").reduce((s, b) => s + b.price, 0).toLocaleString("ru-RU")} ₽
+                              {bookings
+                                .filter((b) => b.status !== "cancelled")
+                                .reduce((sum, b) => sum + (b.price || 0), 0)
+                                .toLocaleString("ru-RU")} ₽
                             </div>
                           </div>
                         </div>
