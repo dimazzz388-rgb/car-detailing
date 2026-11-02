@@ -1110,47 +1110,59 @@
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2.5 pt-1">
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-                      <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.services.length}</div>
-                        <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">услуг в прайсе</div>
-                      </div>
-                    </div>
+                  {(() => {
+                    const validPrices = tenantConfig.services.map(s => s.price).filter(p => p && p > 0);
+                    const hasPrices = validPrices.length > 0;
+                    const minPrice = hasPrices ? Math.min(...validPrices) : null;
 
-                    <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-  <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-    </svg>
-  </div>
-  <div>
-    <div className="text-[10px] sm:text-xs text-white/40 leading-none">от</div>
-    <div className="text-base sm:text-lg font-bold text-white leading-tight mt-0.5">
-      {Math.min(...tenantConfig.services.map(s => s.price)).toLocaleString("ru-RU")} ₽
-    </div>
-    <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">за услугу</div>
-  </div>
-</div>
+                    return (
+                      <div className={`grid ${hasPrices ? "grid-cols-3" : "grid-cols-2"} gap-2.5 pt-1`}>
+                        {/* Карточка 1: Количество услуг */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                          <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.services.length}</div>
+                            <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">услуг в прайсе</div>
+                          </div>
+                        </div>
 
-                    <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
-                      <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+                        {/* Карточка 2: Минимальная цена (ОТОБРАЖАЕТСЯ ТОЛЬКО ЕСЛИ ЕСТЬ ЦЕНЫ) */}
+                        {hasPrices && (
+                          <div className="p-3 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                            <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <div className="text-[10px] sm:text-xs text-white/40 leading-none">от</div>
+                              <div className="text-base sm:text-lg font-bold text-white leading-tight mt-0.5">
+                                {minPrice.toLocaleString("ru-RU")} ₽
+                              </div>
+                              <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">за услугу</div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Карточка 3: Боксы */}
+                        <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
+                          <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.boxes}</div>
+                            <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">бокса в сервисе</div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.boxes}</div>
-                        <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">бокса в сервисе</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    );
+                  })()}
 
                 {/* БЛОК «ЗАПИСЬ В СТУДИЮ» */}
                 <div className="space-y-3">
@@ -1331,7 +1343,7 @@
                           <div className="flex items-start justify-between gap-3">
                             <h4 className="text-sm sm:text-base font-semibold text-white leading-snug">{s.title}</h4>
                             <span className="text-sm sm:text-base font-bold text-[#008CFF] shrink-0">
-                              {s.price.toLocaleString("ru-RU")} ₽
+                              {s.price ? `${s.price.toLocaleString("ru-RU")} ₽` : "Уточняется"}
                             </span>
                           </div>
 
@@ -1366,7 +1378,9 @@
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#008CFF]">{selectedService.price.toLocaleString("ru-RU")} ₽</span>
+                        <span className="text-sm font-bold text-[#008CFF]">
+                          {selectedService.price ? `${selectedService.price.toLocaleString("ru-RU")} ₽` : "Уточняется"}
+                        </span>
                         <svg className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -1550,7 +1564,9 @@
                       </div>
                       <div className="grid grid-cols-[110px_1fr] items-center gap-3 py-2.5">
                         <span className="text-white/50">Сумма:</span>
-                        <span className="text-[#008CFF] font-bold text-base sm:text-lg text-right">{selectedService.price.toLocaleString("ru-RU")} ₽</span>
+                        <span className="text-[#008CFF] font-bold text-base sm:text-lg text-right">
+                          {selectedService.price ? `${selectedService.price.toLocaleString("ru-RU")} ₽` : "Уточняется по телефону"}
+                        </span>
                       </div>
                     </div>
 
@@ -1652,7 +1668,9 @@
                       </div>
                       <div className="grid grid-cols-[110px_1fr] items-center gap-3 py-2.5">
                         <span className="text-white/40">Сумма:</span>
-                        <span className="text-[#008CFF] font-bold text-base sm:text-lg text-right">{lastConfirmedBooking.price.toLocaleString("ru-RU")} ₽</span>
+                        <span className="text-[#008CFF] font-bold text-base sm:text-lg text-right">
+                          {lastConfirmedBooking.price ? `${lastConfirmedBooking.price.toLocaleString("ru-RU")} ₽` : "Уточняется по телефону"}
+                        </span>
                       </div>
                     </div>
 
