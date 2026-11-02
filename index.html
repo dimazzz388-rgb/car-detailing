@@ -1339,9 +1339,11 @@
                         >
                           <div className="flex items-start justify-between gap-3">
                             <h4 className="text-sm sm:text-base font-semibold text-white leading-snug">{s.title}</h4>
-                            <span className="text-sm sm:text-base font-bold text-[#008CFF] shrink-0">
-                              {s.price ? `${s.price.toLocaleString("ru-RU")} ₽` : "Уточняется"}
-                            </span>
+                            {Boolean(s.price) && (
+                              <span className="text-sm sm:text-base font-bold text-[#008CFF] shrink-0">
+                                {s.price.toLocaleString("ru-RU")} ₽
+                              </span>
+                            )}
                           </div>
 
                           {s.desc && (
@@ -1375,9 +1377,11 @@
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#008CFF]">
-                          {selectedService.price ? `${selectedService.price.toLocaleString("ru-RU")} ₽` : "Уточняется"}
-                        </span>
+                        {Boolean(selectedService.price) && (
+                          <span className="text-sm font-bold text-[#008CFF]">
+                            {selectedService.price.toLocaleString("ru-RU")} ₽
+                          </span>
+                        )}
                         <svg className="w-4 h-4 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
@@ -2030,7 +2034,9 @@
                             Время: {s.duration >= 8 ? `от ${Math.round(s.duration / 8)} д.` : `от ${s.duration} ч.`}
                           </div>
                         </div>
-                        <div className="text-sm font-bold text-[#008CFF]">{s.price.toLocaleString("ru-RU")} ₽</div>
+                        {Boolean(s.price) && (
+                          <div className="text-sm font-bold text-[#008CFF]">{s.price.toLocaleString("ru-RU")} ₽</div>
+                        )}
                       </div>
                     );
                   })}
