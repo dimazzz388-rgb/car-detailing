@@ -1058,12 +1058,12 @@
 
           <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-5">
             
-            {/* ГЛАВНАЯ */}
+            {/* 1. ГЛАВНАЯ */}
             {activeTab === "home" && (
               <div className="space-y-6">
                 <div className="relative rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl min-h-[380px] sm:min-h-[420px] flex flex-col justify-end p-6 sm:p-8">
                   <img
-                    src={tenantConfig.heroImage}
+                    src={tenantConfig.heroImage || "https://i.postimg.cc/2yVNB9R5/Screenshot-23.png"}
                     alt="Hero"
                     className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.62]"
                   />
@@ -1110,15 +1110,13 @@
                     </p>
                   </div>
 
-                  {/* ТРИ КАРТОЧКИ В БЛОКЕ О СЕРВИСЕ */}
                   {(() => {
-                    const validPrices = tenantConfig.services.map(s => s.price).filter(p => p && p > 0);
+                    const validPrices = tenantConfig.services ? tenantConfig.services.map(s => s.price).filter(p => p && p > 0) : [];
                     const hasPrices = validPrices.length > 0;
                     const minPrice = hasPrices ? Math.min(...validPrices) : null;
 
                     return (
                       <div className={`grid ${hasPrices ? "grid-cols-3" : "grid-cols-2"} gap-2.5 pt-1`}>
-                        {/* Карточка 1: Услуги */}
                         <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
                           <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1126,12 +1124,11 @@
                             </svg>
                           </div>
                           <div>
-                            <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.services.length}</div>
+                            <div className="text-lg sm:text-xl font-bold text-white leading-tight">{tenantConfig.services ? tenantConfig.services.length : 0}</div>
                             <div className="text-[10px] sm:text-xs text-white/45 mt-0.5">услуг в прайсе</div>
                           </div>
                         </div>
 
-                        {/* Карточка 2: Минимальная цена */}
                         {hasPrices && (
                           <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
                             <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
@@ -1148,7 +1145,6 @@
                           </div>
                         )}
 
-                        {/* Карточка 3: Боксы */}
                         <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] flex flex-col justify-between">
                           <div className="w-7 h-7 rounded-lg bg-[#008CFF]/15 text-[#008CFF] flex items-center justify-center mb-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1163,6 +1159,7 @@
                       </div>
                     );
                   })()}
+                </div>
 
                 {/* БЛОК «ЗАПИСЬ В СТУДИЮ» */}
                 <div className="space-y-3">
@@ -1170,7 +1167,8 @@
                   <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/[0.06] space-y-4">
                     <div>
                       <h4 className="text-base sm:text-lg font-bold text-white">
-                        {tenantConfig.bookingTitle || "Свежий вид для вашего авто"}</h4>
+                        {tenantConfig.bookingTitle || "Свежий вид для вашего авто"}
+                      </h4>
                       <p className="text-xs sm:text-sm text-white/50 mt-1">
                         Выберите услугу и удобное время — остальное возьмём на себя
                       </p>
@@ -1241,7 +1239,6 @@
                 </footer>
               </div>
             )}
-
 
             {/* МАСТЕР ЗАПИСИ (4 ШАГА) */}
             {activeTab === "booking" && (
